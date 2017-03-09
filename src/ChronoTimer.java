@@ -1,8 +1,11 @@
 import java.util.*;
 import java.time.*;
 
+// added some bacon
+
 public class ChronoTimer {
 	// system
+	static boolean test;
 	static boolean power;
 	static boolean run;
 	static boolean event;
