@@ -281,7 +281,6 @@ public class ChronoTimer {
 		toFinish.clear();
 		completed.clear();
 		totRacers = 0;
-		runCounter = 0;
 	}
 	
 	static void reset() {
