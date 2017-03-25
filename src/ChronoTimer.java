@@ -269,6 +269,7 @@ public class ChronoTimer {
 	}
 	
 	static void endrun(){
+		Converter.ConvertTo(completed, runCounter);
 		run = false;
 		racers.clear();
 		toFinish.clear();
