@@ -3,12 +3,13 @@ import java.time.*;
 
 public class ChronoTimer {
 	// system
+	static final int MAX_CHANNELS = 1000;
 	static boolean power;
 	static boolean run;
-	static String event;
+	static String event = "";
 	static boolean out;
 	static Scanner console = new Scanner(System.in);
-	static Channel[] channels = new Channel[4];
+	static boolean[] channels = new boolean[MAX_CHANNELS];
 	// race
 	static int totRacers;
 	//static Queue<Racer> racers = new LinkedList<Racer>();
@@ -31,18 +32,12 @@ public class ChronoTimer {
 		ChronoTimer.run = false;
 		ChronoTimer.event = "";
 		
-		for(int i = 0; i < 4; i++) {
-			
-			channels[i] = new Channel();
-		}
+		ChronoTimer.channels = new boolean[MAX_CHANNELS];
 	}
 
 	public static void main(String args[]) {
 		
-		for (int i = 0; i < 4; i++) {
-			
-			channels[i] = new Channel();
-		}
+		channels = new boolean[MAX_CHANNELS];
 		
 		stopWatch = new Time();
 		Simulator Chrono = new Simulator();
@@ -113,9 +108,7 @@ public class ChronoTimer {
 			else if (splitted[0].equalsIgnoreCase("NUM") && power && !event.isEmpty() && run) {
 
 				
-				racers.add(new Racer(Integer.parseInt(splitted[1]), totRacers));
-				totRacers++;
-				System.out.println("Racer " + splitted[1] + " has been added");
+				num();
 			}
 			
 			else if (splitted[0].equalsIgnoreCase("START") && power && !event.isEmpty() && run && !racers.isEmpty()) {
@@ -217,6 +210,12 @@ public class ChronoTimer {
 		}
 	}
 	
+	static void num() {
+		totRacers++;
+		racers.add(new Racer(Integer.parseInt(splitted[1]), totRacers));
+		System.out.println("Racer " + splitted[1] + " has been added");
+	}
+	
 	static void event() {
 		if(power){
 			if(event.isEmpty()){
@@ -280,14 +279,9 @@ public class ChronoTimer {
 	
 	static void reset() {
 		
-		channels[0].top = false;
-		channels[0].bottom = false;
-		channels[1].top = false;
-		channels[1].bottom = false;
-		channels[2].top = false;
-		channels[2].bottom = false;
-		channels[3].top = false;
-		channels[3].bottom = false;
+		for (int i = 0; i < channels.length; i++) {
+			channels[i] = false;
+		}
 		run = false;
 		event = "";
 		racers.clear();
@@ -299,139 +293,242 @@ public class ChronoTimer {
 	
 	static void togChannel(int input) {
 		
-		int channel = (int) Math.ceil((double) input / 2) - 1;
-		
-		if (input % 2 == 0){
-			
-			if (!channels[channel].bottom) {
-				channels[channel].bottom = true;
-			}
-			
-			else {
-				channels[channel].bottom = false;
-			}
-		}
-		
-		else {
-			
-			if (!channels[channel].top) {
-				
-				channels[channel].top = true;
-			}
-			
-			else {
-				
-				channels[channel].top = false;
-			}
+		if (!channels[channel]) {
+			channels[channel] = true;
+		} else {
+			channels[channel] = false;
 		}
 	}
 	
-	static void trigChannel(int parseInt) {
-		// convert parseInt (0-3) to channel (1-8)
-		int channel = (int) Math.ceil((double) parseInt / 2) - 1;
-		
+	static void trigChannel(int channel) {
+
 		// used for determining which list a racer is in
 		boolean found = false;
-		
+
 		// list of elements to remove from list
 		LinkedList<Racer> temp = new LinkedList<>();
-		
-		if (channel < 3 && channel >= 0) {
-			// determine if start or finish channel
-			if (parseInt % 2 == 1) {
-				
-				if (channels[channel].top == true) {
-					// first, check if racer already started. If so, update his start time
-					if(!toFinish.isEmpty()){
-						for(Racer s : toFinish){
-							if(s.index == channel){
-								s.start = time.millis();
-								found = true;
+		if (channel < MAX_CHANNELS && channel > 0) {
+			if (event.equalsIgnoreCase("IND")) {
+				// determine if start or finish channel
+				// if start channel:
+				if (channel % 2 == 1) {
+					// if channel toggled on
+					if (channels[channel] == true) {
+						// first, check if racer already started. If so, update
+						// his start time
+						if (!toFinish.isEmpty()) {
+							for (Racer s : toFinish) {
+								if (s.index == Math.ceil((double) channel / 2)) {
+									s.start = time.millis();
+									found = true;
+								}
 							}
 						}
-					}
-					// If not, start the racer
-					if (!racers.isEmpty() && !found) {
-						for(Racer s : racers){
-							if(s.index == channel){
-								temp.add(s);
-								s.start = time.millis();
-								toFinish.add(s);
-								found = true;
+						// If not, start the racer
+						if (!racers.isEmpty() && !found) {
+							for (Racer s : racers) {
+								if (s.index == Math.ceil((double) channel / 2)) {
+									temp.add(s);
+									s.start = time.millis();
+									toFinish.add(s);
+									found = true;
+								}
 							}
+							racers.removeAll(temp);
 						}
-						racers.removeAll(temp);
-					} 
-					// if no racer found attached to channel
-					if(!found){
-						System.out.println("No racer linked to that channel.");
+						// if no racer found attached to channel
+						if (!found) {
+							System.out.println("No racer linked to that channel.");
+						}
+					} else {
+						System.out.println("channel was not toggled");
 					}
-				}
-				else {
-					System.out.println("channel was not toggled");
-				}
 
-			}
-			// determine if finish channel
-			if (parseInt % 2 == 0) {
-				if (channels[channel].bottom == true) {
-					// First, check if racer has already finished. If so, update his finish time
-					// If not, finish him
-					if (!completed.isEmpty()) {
-						
-						for(Racer s : completed){
-							if(s.index == channel){
-								s.fin = time.millis();
-								found = true;
-							}
-						}
-					}
-					if(!toFinish.isEmpty() && !found){
-						for(Racer s : toFinish){
-							if(s.index == channel){
-								temp.add(s);
-								s.fin = time.millis();
-								completed.add(s);
-								found = true;
-							}
-						}
-						toFinish.removeAll(temp);
-					}
-					// if no racer found attached to channel
-					if(!found){
-						System.out.println("No racer linked to that channel.");
-					}
-			} 
-					
-			else {
-					System.out.println("channel was not toggled");
 				}
-				
+				// if finish channel
+				if (channel % 2 == 0) {
+					if (channels[channel] == true) {
+						// First, check if racer has already finished. If so,
+						// update his finish time
+						// If not, finish him
+						if (!completed.isEmpty()) {
+
+							for (Racer s : completed) {
+								if (s.index == Math.ceil((double) channel / 2)) {
+									s.fin = time.millis();
+									found = true;
+								}
+							}
+						}
+						if (!toFinish.isEmpty() && !found) {
+							for (Racer s : toFinish) {
+								if (s.index == Math.ceil((double) channel / 2)) {
+									temp.add(s);
+									s.fin = time.millis();
+									completed.add(s);
+									found = true;
+								}
+							}
+							toFinish.removeAll(temp);
+						}
+						// if no racer found attached to channel
+						if (!found) {
+							System.out.println("No racer linked to that channel.");
+						}
+					}
+
+					else {
+						System.out.println("channel was not toggled");
+					}
+
+				}
+			} else if (event.equalsIgnoreCase("PARIND")) {
+				// determine if start or finish channel
+				// if start channel:
+				if (channel % 2 == 1) {
+					// if channel toggled on
+					if (channels[channel] == true) {
+						// first, check if racer already started. If so, update
+						// his start time
+						if (!toFinish.isEmpty()) {
+							for (Racer s : toFinish) {
+								// if racer is found
+								if (s.index == Math.ceil((double) channel / 4)) {
+									if (s.fin == 0) {
+										s.start = time.millis();
+									} else {
+										s.start2 = time.millis();
+									}
+									found = true;
+								}
+							}
+						}
+						// If not, start the racer
+						if (!racers.isEmpty() && !found) {
+							for (Racer s : racers) {
+								if (s.index == Math.ceil((double) channel / 4)) {
+									temp.add(s);
+									if (s.start == 0) {
+										s.start = time.millis();
+									} else {
+										s.start2 = time.millis();
+									}
+									toFinish.add(s);
+									found = true;
+								}
+							}
+							racers.removeAll(temp);
+						}
+						// if no racer found attached to channel
+						if (!found) {
+							System.out.println("No racer linked to that channel.");
+						}
+					} else {
+						System.out.println("channel was not toggled");
+					}
+
+				}
+				// if finish channel
+				if (channel % 2 == 0) {
+					if (channels[channel] == true) {
+						// First, check if racer has already finished. If so,
+						// update his finish time
+						// If not, finish him
+						if (!completed.isEmpty()) {
+
+							for (Racer s : completed) {
+								if (s.index == Math.ceil((double) channel / 4)) {
+									s.fin2 = time.millis();
+									found = true;
+								}
+							}
+						}
+						if (!toFinish.isEmpty() && !found) {
+							for (Racer s : toFinish) {
+								if (s.index == Math.ceil((double) channel / 4)) {
+									temp.add(s);
+									if (s.fin == 0) {
+										s.fin = time.millis();
+										racers.add(s);
+									} else {
+										s.fin2 = time.millis();
+										completed.add(s);
+									}
+									found = true;
+								}
+							}
+							toFinish.removeAll(temp);
+						}
+						// if no racer found attached to channel
+						if (!found) {
+							System.out.println("No racer linked to that channel.");
+						}
+					}
+
+					else {
+						System.out.println("channel was not toggled");
+					}
+
+				}
+			} else {
+				System.out.println("Shouldn't be here, but invalid event");
 			}
 		}
-		
+
 		else {
-			System.out.println("invlaid channel number");
+			System.out.println("invalid channel number");
 		}
 	}	
-	static void printlists(){
-		
-		System.out.println("racers: ");
-		for(Racer s : racers){
-			System.out.print("      ");
-			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: " + stopWatch.formatTime(s.fin));
+	static void printlists() {
+		if (event.equalsIgnoreCase("IND")) {
+			System.out.println("racers: ");
+			for (Racer s : racers) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+			}
+
+			System.out.println("toFinish: ");
+			for (Racer s : toFinish) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+			}
+
+			System.out.println("completed: ");
+			for (Racer s : completed) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+			}
 		}
-		
-		System.out.println("toFinish: ");
-		for(Racer s : toFinish){
-			System.out.print("      ");
-			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: " + stopWatch.formatTime(s.fin));
-		}
-		
-		System.out.println("completed: ");
-		for(Racer s : completed){
-			System.out.print("      ");
-			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: " + stopWatch.formatTime(s.fin));
+		if (event.equalsIgnoreCase("PARIND")) {
+			System.out.println("racers: ");
+			for (Racer s : racers) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+				System.out.println("		start: " + stopWatch.formatTime(s.start2) + " finish: "
+						+ stopWatch.formatTime(s.fin2));
+			}
+
+			System.out.println("toFinish: ");
+			for (Racer s : toFinish) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+				System.out.println("		start: " + stopWatch.formatTime(s.start2) + " finish: "
+						+ stopWatch.formatTime(s.fin2));
+			}
+
+			System.out.println("completed: ");
+			for (Racer s : completed) {
+				System.out.print("      ");
+				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+						+ stopWatch.formatTime(s.fin));
+				System.out.println("		start: " + stopWatch.formatTime(s.start2) + " finish: "
+						+ stopWatch.formatTime(s.fin2));
+			}
 		}
 	}
 }
