@@ -211,7 +211,7 @@ public class ChronoTimer {
 	
 	static void num(int racernum) {
 		totRacers++;
-		racers.add(new Racer(Integer.parseInt(splitted[1]), totRacers));
+		racers.add(new Racer(racernum, totRacers));
 		System.out.println("Racer " + splitted[1] + " has been added");
 	}
 	
