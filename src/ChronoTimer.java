@@ -334,6 +334,7 @@ public class ChronoTimer {
 		// list of elements to remove from list
 		LinkedList<Racer> temp = new LinkedList<>();
 		if (channel < MAX_CHANNELS && channel > 0) {
+			if (event.equalsIgnoreCase("IND")) {
 				// determine if start or finish channel
 				// if start channel:
 				if (channel % 2 == 1) {
@@ -407,12 +408,77 @@ public class ChronoTimer {
 					}
 
 				}
-			} 
+			} else if (event.equalsIgnoreCase("PARIND")) {
+				// determine if start or finish channel
+				// if start channel:
+				if (channel % 2 == 1) {
+					// if channel toggled on
+					// first, check if racer already started. If so, update
+					// his start time
+					if (!toFinish.isEmpty()) {
+						for (Racer s : toFinish) {
+							if (s.index == Math.ceil((double) channel / 2)) {
+								s.start = time.millis();
+								found = true;
+							}
+						}
+					}
+					// If not, start the racer
+					if (!racers.isEmpty() && !found) {
+						for (Racer s : racers) {
+							if (s.index == Math.ceil((double) channel / 2)) {
+								temp.add(s);
+								s.start = time.millis();
+								toFinish.add(s);
+								found = true;
+							}
+						}
+						racers.removeAll(temp);
+					}
+					// if no racer found attached to channel
+					if (!found) {
+						System.out.println("No racer linked to that channel.");
+					}
+
+				}
+				// if finish channel
+				if (channel % 2 == 0) {
+					// First, check if racer has already finished. If so,
+					// update his finish time
+					// If not, finish him
+					if (!completed.isEmpty()) {
+
+						for (Racer s : completed) {
+							if (s.index == Math.ceil((double) channel / 2)) {
+								s.fin = time.millis();
+								found = true;
+							}
+						}
+					}
+					if (!toFinish.isEmpty() && !found) {
+						for (Racer s : toFinish) {
+							if (s.index == Math.ceil((double) channel / 2)) {
+								temp.add(s);
+								s.fin = time.millis();
+								completed.add(s);
+								found = true;
+							}
+						}
+						toFinish.removeAll(temp);
+					}
+					// if no racer found attached to channel
+					if (!found) {
+						System.out.println("No racer linked to that channel.");
+					}
+
+				}
+			}
+		}
 
 		else {
 			System.out.println("invalid channel number");
 		}
-	}	
+	}
 	static void printlists() {
 
 			System.out.println("racers: ");
