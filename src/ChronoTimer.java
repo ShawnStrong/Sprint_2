@@ -217,6 +217,7 @@ public class ChronoTimer {
 				} else if (input.equalsIgnoreCase("PARIND")) {
 					event = input;
 					System.out.println("Parallel Individual Race has been Selected\n");
+					System.out.println("for PARNID use START and STOP commands instead of triggers.");
 					System.out.println("Waiting for Newrun: Type Newrun\n");
 				} else {
 					System.out.println("That is not a valid event type");
