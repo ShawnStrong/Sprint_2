@@ -296,7 +296,7 @@ public class ChronoTimer {
 		runCounter = 0;
 	}
 	
-	static void togChannel(int input) {
+	static void togChannel(int channel) {
 		
 		if (!channels[channel]) {
 			channels[channel] = true;
