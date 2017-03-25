@@ -86,7 +86,7 @@ Simulator() {
 						
 						else if (split[1].equalsIgnoreCase("NEWRUN")) {
 							
-							ChronoTimer.run = true;
+							ChronoTimer.newRun();
 							System.out.println("\nNew run initiated\n");
 						}
 						
