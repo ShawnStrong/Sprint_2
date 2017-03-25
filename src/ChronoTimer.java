@@ -108,16 +108,12 @@ public class ChronoTimer {
 				num();
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("START") && power && !event.isEmpty() && run && !racers.isEmpty()) {
-				
-				trigChannel(1);
-				System.out.println("Race started \n");
+			else if (splitted[0].equalsIgnoreCase("START") && power && !event.isEmpty() && run) {
+				start();
 			}
 
-			else if (splitted[0].equalsIgnoreCase("FINISH") && power && !event.isEmpty() && run && !racers.isEmpty()) {
-				
-				trigChannel(2);
-				System.out.println("Race finish \n");
+			else if (splitted[0].equalsIgnoreCase("FINISH") && power && !event.isEmpty() && run) {
+				finish();
 			}
 			
 			else if (splitted[0].equalsIgnoreCase("TRIG") && power && !event.isEmpty() && run) {
@@ -294,6 +290,25 @@ public class ChronoTimer {
 		completed.clear();
 		totRacers = 0;
 		runCounter = 0;
+	}
+	
+	static void start() {
+		if (!racers.isEmpty()) {
+			// look at first racer's start channel and let trigChannel do the
+			// rest
+			trigChannel(racers.getFirst().index * 2 - 1);
+		} else {
+			System.out.println("No racers to start");
+		}
+	}
+
+	static void finish() {
+		if (!toFinish.isEmpty()) {
+			trigChannel(toFinish.getFirst().index * 2);
+		} else {
+			System.out.println("No racers to finish");
+		}
+
 	}
 	
 	static void togChannel(int channel) {
