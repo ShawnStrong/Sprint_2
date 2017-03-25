@@ -5,9 +5,9 @@ import java.io.PrintWriter;
 import java.util.*;
 
 public class Converter {
-	Gson g = new Gson();
+	static Gson g = new Gson();
 	
-	void ConvertTo(LinkedList k, int r) {
+	static void ConvertTo(LinkedList k, int r) {
 		String out = "";
 		out = g.toJson(k);
 		
