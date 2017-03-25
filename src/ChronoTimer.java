@@ -99,10 +99,7 @@ public class ChronoTimer {
 			
 			else if (splitted[0].equalsIgnoreCase("NEWRUN") && power && !event.isEmpty() && !run) {
 				
-				run = true;
-				runCounter++;
-				System.out.println("New run initiated \n");
-				System.out.println("'list' for lists of commands\n");
+				newRun();
 			}
 			
 			else if (splitted[0].equalsIgnoreCase("NUM") && power && !event.isEmpty() && run) {
@@ -265,6 +262,14 @@ public class ChronoTimer {
 		else {
 			System.out.println("\nThe power is off\n");
 		}
+	}
+	
+	static void newRun()
+	{
+		run = true;
+		runCounter = runCounter+1;
+		System.out.println("New run initiated \n");
+		System.out.println("'list' for lists of commands\n");
 	}
 	
 	static void endrun(){
