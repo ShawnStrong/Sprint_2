@@ -12,7 +12,7 @@ public class ChronoTimer {
 	static boolean[] channels = new boolean[MAX_CHANNELS];
 	// race
 	static int totRacers;
-	//static Queue<Racer> racers = new LinkedList<Racer>();
+	// static Queue<Racer> racers = new LinkedList<Racer>();
 	static LinkedList<Racer> racers = new LinkedList<Racer>();
 	static LinkedList<Racer> toFinish = new LinkedList<Racer>();
 	static LinkedList<Racer> completed = new LinkedList<Racer>();
@@ -23,7 +23,7 @@ public class ChronoTimer {
 	static Time stopWatch;
 	static String input;
 	static String[] splitted;
-	
+
 	static int runCounter = 0;
 
 	public ChronoTimer() {
@@ -31,14 +31,14 @@ public class ChronoTimer {
 		ChronoTimer.power = false;
 		ChronoTimer.run = false;
 		ChronoTimer.event = "";
-		
+
 		ChronoTimer.channels = new boolean[MAX_CHANNELS];
 	}
 
 	public static void main(String args[]) {
-		
+
 		channels = new boolean[MAX_CHANNELS];
-		
+
 		stopWatch = new Time();
 		Simulator Chrono = new Simulator();
 		time = Clock.systemUTC();
@@ -53,12 +53,11 @@ public class ChronoTimer {
 		while (runConsole) {
 
 			System.out.println("Enter a new command \n");
-			
-			if(!power) {
+
+			if (!power) {
 				System.out.println("POWER to turn on");
 			}
-			
-			
+
 			input = console.nextLine();
 			splitted = input.split("\\s+");
 
@@ -66,48 +65,47 @@ public class ChronoTimer {
 				/////// adding power call, terminates if power called ????
 				/////// change???
 				if (power == false) {
-					
+
 					power = true;
 					System.out.println("Welcome to the Chronotimer\n");
 					System.out.println("Waiting for Event command: Type 'Event + eventType' (ind/parind)\n");
-				} 
-				
+				}
+
 				else if (power == true) {
-					
+
 					power = false;
 					System.out.println("Shutting off ChronoTimer");
 				}
 			}
 
 			else if (splitted[0].equalsIgnoreCase("EXIT")) {
-				
+
 				System.exit(0);
 				System.out.println("Exiting program, goodbye \n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("EVENT")) {
-				
+
 				event();
-				
+
 			}
 
 			else if (splitted[0].equalsIgnoreCase("RESET") && power) {
-				
+
 				reset();
 				System.out.println("Run has been reset\n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("NEWRUN") && power && !event.isEmpty() && !run) {
-				
+
 				newRun();
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("NUM") && power && !event.isEmpty() && run) {
 
-				
 				num();
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("START") && power && !event.isEmpty() && run) {
 				start();
 			}
@@ -115,77 +113,69 @@ public class ChronoTimer {
 			else if (splitted[0].equalsIgnoreCase("FINISH") && power && !event.isEmpty() && run) {
 				finish();
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("TRIG") && power && !event.isEmpty() && run) {
-				
+
 				trigChannel(Integer.parseInt(splitted[1]));
 				System.out.println("You have triggered " + splitted[1] + "\n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("TOG") && power && !event.isEmpty() && run) {
-				
+
 				togChannel(Integer.parseInt(splitted[1]));
 				System.out.println("You have toggled " + splitted[1] + "\n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("PRINT") && power && !event.isEmpty() && run) {
-				
+
 				receipt();
-			}
-			else if (splitted[0].equalsIgnoreCase("PRINTlists")) {
-				
+			} else if (splitted[0].equalsIgnoreCase("PRINTlists")) {
+
 				printlists();
 			}
-			
-			else if (splitted[0].equalsIgnoreCase("ENDRUN")&& power && !event.isEmpty() && run) {
-				
+
+			else if (splitted[0].equalsIgnoreCase("ENDRUN") && power && !event.isEmpty() && run) {
+
 				endrun();
 				System.out.println("Run ended \n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("TIME")) {
 
 				stopWatch.setTime(splitted[1]);
 				System.out.println("You set the time at: " + splitted[1] + "\n");
 			}
-		
+
 			else if (splitted[0].equalsIgnoreCase("DNF") && !toFinish.isEmpty()) {
-				// Remove first racer from toFinish, set his finish time to -1, then add him to the completed list
+				// Remove first racer from toFinish, set his finish time to -1,
+				// then add him to the completed list
 				Racer temp = toFinish.removeFirst();
-				System.out.println("Racer "+temp.racerNum+" did not finish.");
+				System.out.println("Racer " + temp.racerNum + " did not finish.");
 				temp.fin = -1;
 				completed.add(temp);
 				System.out.println("Run disqualified \n");
 			}
 
 			else if (splitted[0].equalsIgnoreCase("CANCEL") && !toFinish.isEmpty()) {
-				
-				// Remove first racer from toFinish, set his start time to 0, then add him to racers
+
+				// Remove first racer from toFinish, set his start time to 0,
+				// then add him to racers
 				Racer temp = toFinish.removeFirst();
-				System.out.println("Racer "+temp.racerNum+" moved back to start.");
+				System.out.println("Racer " + temp.racerNum + " moved back to start.");
 				temp.start = 0;
-				racers.addFirst(temp); 
+				racers.addFirst(temp);
 				System.out.println("Run cancel \n");
 			}
-			
+
 			else if (splitted[0].equalsIgnoreCase("LIST")) {
 
-					System.out.println("POWER: on/off \n" 
-						+ "EXIT: exits program \n" 
-						+ "RESET: reset all run times and settings \n"
-						+ "TIME: sets current time\n" 
-						+ "DNF: end that racers run, with no finish time\n" 
-						+ "NUM + (ID): to create racer\n"
-						+ "EVENT: to choose event\n"
-						+ "NEWRUN: start a new run\n"
-						+ "ENDRUN: end current run\n"
-						+ "START: activate trigger\n"
-						+ "FINISH: deactivate trigger\n"
-						+ "TRIG + (#): trigger to activate\n"
-						+ "TOG + (#): toggle to activate\n"
-						+ "PRINT: print results\n"
-						+ "CANCEL: discard current race\n"
-						+ "...................... \n");
+				System.out.println("POWER: on/off \n" + "EXIT: exits program \n"
+						+ "RESET: reset all run times and settings \n" + "TIME: sets current time\n"
+						+ "DNF: end that racers run, with no finish time\n" + "NUM + (ID): to create racer\n"
+						+ "EVENT: to choose event\n" + "NEWRUN: start a new run\n" + "ENDRUN: end current run\n"
+						+ "START: activate trigger\n" + "FINISH: deactivate trigger\n"
+						+ "TRIG + (#): trigger to activate\n" + "TOG + (#): toggle to activate\n"
+						+ "PRINT: print results\n" + "CANCEL: discard current race\n" + "...................... \n");
 			}
 
 			else {
@@ -195,86 +185,90 @@ public class ChronoTimer {
 	} // end while
 
 	static void receipt() {
-		// Cycles through the completed linkedlist and prints out the racer's number and time
-		for(int i = 0; i < completed.size(); i++) {
-			
+		// Cycles through the completed linkedlist and prints out the racer's
+		// number and time
+		for (int i = 0; i < completed.size(); i++) {
+
 			Racer temp = completed.get(i);
-			System.out.println("\nRacer " + temp.racerNum + " time: " + stopWatch.formatTime((temp.fin - temp.start))+ "\n");
+			System.out.println(
+					"\nRacer " + temp.racerNum + " time: " + stopWatch.formatTime((temp.fin - temp.start)) + "\n");
 		}
 	}
-	
+
 	static void num() {
 		totRacers++;
 		racers.add(new Racer(Integer.parseInt(splitted[1]), totRacers));
 		System.out.println("Racer " + splitted[1] + " has been added");
 	}
-	
+
 	static void num(int racernum) {
 		totRacers++;
 		racers.add(new Racer(racernum, totRacers));
-		System.out.println("Racer " + splitted[1] + " has been added");
+		System.out.println("Racer " + racernum + " has been added");
 	}
-	
+
 	static void event() {
-		if(power){
-			if(event.isEmpty()){
-				if(splitted[1].equalsIgnoreCase("IND")){
+		if (power) {
+			if (event.isEmpty()) {
+				if (splitted[1].equalsIgnoreCase("IND")) {
 					event = splitted[1];
 					System.out.println("Individual Race has been Selected\n");
 					System.out.println("Waiting for Newrun: Type Newrun\n");
-				}else if(splitted[1].equalsIgnoreCase("PARIND")){
+				} else if (splitted[1].equalsIgnoreCase("PARIND")) {
 					event = splitted[1];
 					System.out.println("Parallel Individual Race has been Selected\n");
 					System.out.println("Waiting for Newrun: Type Newrun\n");
-				}else{
+				} else {
 					System.out.println("That is not a valid event type");
 				}
-			}else{
+			} else {
 				System.out.println("There is already an event. Please reset before starting a new event.");
 			}
-		}else{
+		} else {
 			System.out.println("Must turn on power");
 		}
 	}
+
 	static void startTime() {
-		
+
 		start = time.millis();
 	}
 
 	static double finishTime() {
-		
+
 		return (time.millis() - start) / 100;
 		// System.out.println(LocalTime.now());
 	}
-	// returns the current value/state of power 
+
+	// returns the current value/state of power
 	static boolean getPower() {
 
 		return power;
 	}
+
 	// sets the power to be its opposite value
 	static void setPower() {
 
-		power = !power;	
-		
+		power = !power;
+
 		if (power == true) {
-			
+
 			System.out.println("\nThe power is on\n");
 		}
-		
+
 		else {
 			System.out.println("\nThe power is off\n");
 		}
 	}
-	
-	static void newRun()
-	{
+
+	static void newRun() {
 		run = true;
-		runCounter = runCounter+1;
+		runCounter = runCounter + 1;
 		System.out.println("New run initiated \n");
 		System.out.println("'list' for lists of commands\n");
 	}
-	
-	static void endrun(){
+
+	static void endrun() {
 		Converter.ConvertTo(completed, runCounter);
 		run = false;
 		racers.clear();
@@ -282,9 +276,9 @@ public class ChronoTimer {
 		completed.clear();
 		totRacers = 0;
 	}
-	
+
 	static void reset() {
-		
+
 		for (int i = 0; i < channels.length; i++) {
 			channels[i] = false;
 		}
@@ -296,7 +290,7 @@ public class ChronoTimer {
 		totRacers = 0;
 		runCounter = 0;
 	}
-	
+
 	static void start() {
 		if (!racers.isEmpty()) {
 			// look at first racer's start channel and let trigChannel do the
@@ -315,16 +309,16 @@ public class ChronoTimer {
 		}
 
 	}
-	
+
 	static void togChannel(int channel) {
-		
+
 		if (!channels[channel]) {
 			channels[channel] = true;
 		} else {
 			channels[channel] = false;
 		}
 	}
-	
+
 	static void trigChannel(int channel) {
 
 		// used for determining which list a racer is in
@@ -478,28 +472,30 @@ public class ChronoTimer {
 			System.out.println("invalid channel number");
 		}
 	}
+
 	static void printlists() {
 
-			System.out.println("racers: ");
-			for (Racer s : racers) {
-				System.out.print("      ");
-				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
-						+ stopWatch.formatTime(s.fin));
-			}
+		System.out.println("racers: ");
+		for (Racer s : racers) {
+			System.out.print("      ");
+			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+					+ stopWatch.formatTime(s.fin));
+		}
 
-			System.out.println("toFinish: ");
-			for (Racer s : toFinish) {
-				System.out.print("      ");
-				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
-						+ stopWatch.formatTime(s.fin));
-			}
+		System.out.println("toFinish: ");
+		for (Racer s : toFinish) {
+			System.out.print("      ");
+			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+					+ stopWatch.formatTime(s.fin));
+		}
 
-			System.out.println("completed: ");
-			for (Racer s : completed) {
-				System.out.print("      ");
-				System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
-						+ stopWatch.formatTime(s.fin));
-			}
-		
+		System.out.println("completed: ");
+		for (Racer s : completed) {
+			System.out.print("      ");
+			System.out.println("Racer " + s.racerNum + " start: " + stopWatch.formatTime(s.start) + " finish: "
+					+ stopWatch.formatTime(s.fin));
+		}
+
 	}
 }
+
