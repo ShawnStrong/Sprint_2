@@ -1,3 +1,5 @@
+
+
 public class Channel {
 	boolean top;
 	boolean bottom;
