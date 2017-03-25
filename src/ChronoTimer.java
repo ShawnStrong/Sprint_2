@@ -22,6 +22,8 @@ public class ChronoTimer {
 	static Time stopWatch;
 	static String input;
 	static String[] splitted;
+	
+	static int runCounter = 0;
 
 	public ChronoTimer() {
 
@@ -103,6 +105,7 @@ public class ChronoTimer {
 			else if (splitted[0].equalsIgnoreCase("NEWRUN") && power && !event.isEmpty() && !run) {
 				
 				run = true;
+				runCounter++;
 				System.out.println("New run initiated \n");
 				System.out.println("'list' for lists of commands\n");
 			}
