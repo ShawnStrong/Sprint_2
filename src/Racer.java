@@ -3,6 +3,8 @@ public class Racer {
 	public int totalRacers;
 	public long start;
 	public long fin;
+	public long start2;
+	public long fin2;
 	public int index;
 	public int x;
 	public int y;
@@ -16,6 +18,8 @@ public class Racer {
 		this.y = totalRacers * 2;
 		this.start = 0;
 		this.fin = 0;
+		this.start2 = 0;
+		this.fin2 = 0;
 		this.index = channel;
 	}
 
