@@ -86,7 +86,7 @@ public class ChronoTimer {
 
 			else if (splitted[0].equalsIgnoreCase("EVENT")) {
 
-				event();
+				event(splitted[1]);
 
 			}
 
@@ -207,15 +207,15 @@ public class ChronoTimer {
 		System.out.println("Racer " + racernum + " has been added");
 	}
 
-	static void event() {
+	static void event(String input) {
 		if (power) {
 			if (event.isEmpty()) {
-				if (splitted[1].equalsIgnoreCase("IND")) {
-					event = splitted[1];
+				if (input.equalsIgnoreCase("IND")) {
+					event = input;
 					System.out.println("Individual Race has been Selected\n");
 					System.out.println("Waiting for Newrun: Type Newrun\n");
-				} else if (splitted[1].equalsIgnoreCase("PARIND")) {
-					event = splitted[1];
+				} else if (input.equalsIgnoreCase("PARIND")) {
+					event = input;
 					System.out.println("Parallel Individual Race has been Selected\n");
 					System.out.println("Waiting for Newrun: Type Newrun\n");
 				} else {
