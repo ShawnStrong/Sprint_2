@@ -1,13 +1,13 @@
 public class Racer {
 	public int racerNum;
 	public int totalRacers;
-	public int start;
-	public int fin;
+	public long start;
+	public long fin;
 	public int index;
 	public int x;
 	public int y;
 	
-	public Racer (int rNum, int tRacers) {
+	public Racer (int rNum, int channel) {
 		
 		this.racerNum = rNum;
 		
@@ -16,7 +16,7 @@ public class Racer {
 		this.y = totalRacers * 2;
 		this.start = 0;
 		this.fin = 0;
-		this.index = tRacers;
+		this.index = channel;
 	}
 
 }
