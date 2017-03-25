@@ -5,7 +5,7 @@ public class ChronoTimer {
 	// system
 	static boolean power;
 	static boolean run;
-	static boolean event;
+	static String event;
 	static boolean out;
 	static Scanner console = new Scanner(System.in);
 	static Channel[] channels = new Channel[4];
@@ -20,12 +20,14 @@ public class ChronoTimer {
 	static LocalTime time2;
 	static double start;
 	static Time stopWatch;
+	static String input;
+	static String[] splitted;
 
 	public ChronoTimer() {
 
 		ChronoTimer.power = false;
 		ChronoTimer.run = false;
-		ChronoTimer.event = false;
+		ChronoTimer.event = "";
 		
 		for(int i = 0; i < 4; i++) {
 			
@@ -59,9 +61,9 @@ public class ChronoTimer {
 				System.out.println("POWER to turn on");
 			}
 			
-			String input;
+			
 			input = console.nextLine();
-			String[] splitted = input.split("\\s+");
+			splitted = input.split("\\s+");
 
 			if (splitted[0].equalsIgnoreCase("POWER")) {
 				/////// adding power call, terminates if power called ????
@@ -86,11 +88,10 @@ public class ChronoTimer {
 				System.out.println("Exiting program, goodbye \n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("EVENT") && power) {
+			else if (splitted[0].equalsIgnoreCase("EVENT")) {
 				
-				event = true;
-				System.out.println("Individual Race has been Selected\n");
-				System.out.println("Waiting for Newrun: Type Newrun\n");
+				event();
+				
 			}
 
 			else if (splitted[0].equalsIgnoreCase("RESET") && power) {
@@ -99,14 +100,14 @@ public class ChronoTimer {
 				System.out.println("Run has been reset\n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("NEWRUN") && power && event && !run) {
+			else if (splitted[0].equalsIgnoreCase("NEWRUN") && power && !event.isEmpty() && !run) {
 				
 				run = true;
 				System.out.println("New run initiated \n");
 				System.out.println("'list' for lists of commands\n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("NUM") && power && event && run) {
+			else if (splitted[0].equalsIgnoreCase("NUM") && power && !event.isEmpty() && run) {
 
 				
 				racers.add(new Racer(Integer.parseInt(splitted[1]), totRacers));
@@ -114,31 +115,31 @@ public class ChronoTimer {
 				System.out.println("Racer " + splitted[1] + " has been added");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("START") && power && event && run && !racers.isEmpty()) {
+			else if (splitted[0].equalsIgnoreCase("START") && power && !event.isEmpty() && run && !racers.isEmpty()) {
 				
 				trigChannel(1);
 				System.out.println("Race started \n");
 			}
 
-			else if (splitted[0].equalsIgnoreCase("FINISH") && power && event && run && !racers.isEmpty()) {
+			else if (splitted[0].equalsIgnoreCase("FINISH") && power && !event.isEmpty() && run && !racers.isEmpty()) {
 				
 				trigChannel(2);
 				System.out.println("Race finish \n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("TRIG") && power && event && run) {
+			else if (splitted[0].equalsIgnoreCase("TRIG") && power && !event.isEmpty() && run) {
 				
 				trigChannel(Integer.parseInt(splitted[1]));
 				System.out.println("You have triggered " + splitted[1] + "\n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("TOG") && power && event && run) {
+			else if (splitted[0].equalsIgnoreCase("TOG") && power && !event.isEmpty() && run) {
 				
 				togChannel(Integer.parseInt(splitted[1]));
 				System.out.println("You have toggled " + splitted[1] + "\n");
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("PRINT") && power && event && run) {
+			else if (splitted[0].equalsIgnoreCase("PRINT") && power && !event.isEmpty() && run) {
 				
 				receipt();
 			}
@@ -147,7 +148,7 @@ public class ChronoTimer {
 				printlists();
 			}
 			
-			else if (splitted[0].equalsIgnoreCase("ENDRUN")&& power && event && run) {
+			else if (splitted[0].equalsIgnoreCase("ENDRUN")&& power && !event.isEmpty() && run) {
 				
 				endrun();
 				System.out.println("Run ended \n");
@@ -213,6 +214,27 @@ public class ChronoTimer {
 		}
 	}
 	
+	static void event() {
+		if(power){
+			if(event.isEmpty()){
+				if(splitted[1].equalsIgnoreCase("IND")){
+					event = splitted[1];
+					System.out.println("Individual Race has been Selected\n");
+					System.out.println("Waiting for Newrun: Type Newrun\n");
+				}else if(splitted[1].equalsIgnoreCase("PARIND")){
+					event = splitted[1];
+					System.out.println("Parallel Individual Race has been Selected\n");
+					System.out.println("Waiting for Newrun: Type Newrun\n");
+				}else{
+					System.out.println("That is not a valid event type");
+				}
+			}else{
+				System.out.println("There is already an event. Please reset before starting a new event.");
+			}
+		}else{
+			System.out.println("Must turn on power");
+		}
+	}
 	static void startTime() {
 		
 		start = time.millis();
@@ -262,7 +284,7 @@ public class ChronoTimer {
 		channels[3].top = false;
 		channels[3].bottom = false;
 		run = false;
-		event = false;
+		event = "";
 		racers.clear();
 		toFinish.clear();
 		completed.clear();
